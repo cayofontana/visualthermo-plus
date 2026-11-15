@@ -2,6 +2,7 @@ from datetime import datetime
 from pathlib import Path
 import json
 import numpy as np
+from matplotlib import image as mpl_image
 
 
 class ThermalRecorder:
@@ -12,10 +13,25 @@ class ThermalRecorder:
         self.timestamps = []
         self.recording = False
 
-    def save_frame(self, frame):
-        path = self.output_dir / f'quadro_{datetime.now():%Y%m%d_%H%M%S_%f}.npy'
-        np.save(path, frame)
-        return path
+    def save_frame(self, frame, color_limits=None):
+        """Salva a matriz Y16 original e uma prévia PNG com a paleta inferno.
+
+        color_limits permite reproduzir exatamente a escala mostrada no viewer.
+        """
+        stem = f'frame_{datetime.now():%Y%m%d%H%M%S_%f}'
+        npy_path = self.output_dir / f'{stem}.npy'
+        png_path = self.output_dir / f'{stem}.png'
+
+        np.save(npy_path, frame)
+        if color_limits is None:
+            minimum, maximum = int(frame.min()), int(frame.max())
+            color_limits = (minimum, max(maximum, minimum + 1))
+
+        mpl_image.imsave(
+            png_path, frame, cmap='inferno',
+            vmin=color_limits[0], vmax=color_limits[1]
+        )
+        return npy_path
 
     def start(self):
         self.frames = []
