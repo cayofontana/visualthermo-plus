@@ -23,7 +23,7 @@ class ThermalViewer:
         self.axis.axis('off')
         self.figure.canvas.mpl_connect('key_press_event', self.on_key)
         self.figure.canvas.mpl_connect('close_event', self.on_close)
-        print('Atalhos: S = salvar quadro | R = gravar/parar sequência | A = escala automática/fixa | Q = sair')
+        print('Atalhos: S = salvar quadro | R = gravar/parar sequência | A = escala automática/fixa/adaptativa | Q = sair')
 
     def on_key(self, event):
         if event.key == 's':
